@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0f172a" />
+  <title>Amazing Weekly Budget</title>
+  <link rel="manifest" href="manifest.json" />
+  <style>
+    :root{
+      --bg:#020617; --bg2:#0f172a; --card:#111827; --card2:#1e293b;
+      --text:#f8fafc; --muted:#94a3b8; --accent:#38bdf8; --accent2:#22c55e;
+      --warn:#f59e0b; --danger:#ef4444; --line:rgba(255,255,255,.1);
+      --shadow:0 12px 36px rgba(0,0,0,.28);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; color:var(--text); font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background:linear-gradient(180deg,var(--bg),var(--bg2)); min-height:100vh;
+    }
+    .wrap{max-width:1180px; margin:0 auto; padding:14px}
+    .hero,.card{
+      background:rgba(17,24,39,.9); border:1px solid var(--line); border-radius:24px; box-shadow:var(--shadow);
+      backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+    }
+    .hero{padding:18px; margin-bottom:14px; background:linear-gradient(135deg,#111827,#0f172a)}
+    .hero-top{display:flex; gap:14px; justify-content:space-between; align-items:flex-start}
+    .brand{display:flex; gap:12px; align-items:center; min-width:0}
+    .logo{width:60px; height:60px; border-radius:18px; background:rgba(255,255,255,.08); display:flex; align-items:center; justify-content:center; font-size:30px; overflow:hidden}
+    .logo img{width:100%; height:100%; object-fit:cover; background:#fff}
+    .title-input{width:100%; margin-top:6px; border:0; border-radius:16px; background:rgba(255,255,255,.08); color:#fff; padding:12px 14px; font-size:24px; font-weight:800}
+    .kicker{font-size:12px; color:#cbd5e1; letter-spacing:.18em; text-transform:uppercase}
+    .subtitle{font-size:14px; color:#cbd5e1; margin-top:8px}
+    .hero-actions{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end}
+    .card{padding:18px; margin-bottom:14px}
+    h1,h2,h3,p{margin:0}
+    h2{font-size:20px; margin-bottom:10px}
+    .small{font-size:13px; color:var(--muted)}
+    .grid{display:grid; gap:14px}
+    .g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .g5{grid-template-columns:repeat(5,minmax(0,1fr))}
+    .stat{padding:16px; border-radius:20px; background:rgba(255,255,255,.04); border:1px solid var(--line)}
+    .stat .value{font-size:30px; font-weight:800; margin-top:6px}
+    label{display:block; font-size:13px; color:var(--muted); margin-bottom:8px}
+    input,select,button,textarea{
+      width:100%; border:1px solid var(--line); background:#0f172a; color:#fff;
+      border-radius:14px; padding:12px 14px; font-size:16px; outline:none;
+    }
+    textarea{min-height:90px; resize:vertical}
+    button{
+      cursor:pointer; background:var(--accent); color:#fff; font-weight:700; border:none;
+    }
+    button.secondary{background:#334155}
+    button.success{background:var(--accent2)}
+    button.warn{background:var(--warn)}
+    button.danger{background:var(--danger)}
+    button.ghost{background:rgba(255,255,255,.08)}
+    .row{display:flex; gap:8px; align-items:end}
+    .row > *{flex:1}
+    .toolbar{display:flex; gap:8px; flex-wrap:wrap}
+    .pill{display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; background:rgba(255,255,255,.07); color:#cbd5e1; font-size:12px}
+    .warning{padding:12px 14px; border-radius:16px; background:rgba(245,158,11,.14); border:1px solid rgba(245,158,11,.34); color:#fde68a}
+    .dangerBox{padding:12px 14px; border-radius:16px; background:rgba(239,68,68,.14); border:1px solid rgba(239,68,68,.34); color:#fecaca}
+    .okBox{padding:12px 14px; border-radius:16px; background:rgba(34,197,94,.14); border:1px solid rgba(34,197,94,.34); color:#bbf7d0}
+    .listItem{
+      padding:14px; border-radius:18px; background:rgba(255,255,255,.04); border:1px solid var(--line); margin-top:10px;
+    }
+    .between{display:flex; justify-content:space-between; gap:10px; align-items:center}
+    .muted{color:var(--muted)}
+    .progress{height:10px; border-radius:999px; overflow:hidden; background:rgba(255,255,255,.08)}
+    .progress > div{height:100%; border-radius:999px; background:var(--accent)}
+    .barRow{margin-top:12px}
+    .barFill{height:14px; border-radius:999px; background:linear-gradient(90deg,var(--accent),#60a5fa)}
+    .table{width:100%; border-collapse:collapse}
+    .table th,.table td{padding:10px 8px; text-align:left; border-bottom:1px solid var(--line); font-size:14px}
+    .table th{color:#cbd5e1; font-weight:700}
+    .right{text-align:right}
+    .hidden{display:none !important}
+    .footerNote{margin-top:10px; color:var(--muted); font-size:13px}
+    .installTip{margin-top:10px}
+    .splitName{font-weight:700}
+    .weekly-history-item{padding:12px 14px; border-radius:16px; background:rgba(255,255,255,.04); border:1px solid var(--line)}
+    .canvasWrap{padding:10px 0 0}
+    canvas{width:100%; max-height:280px; background:transparent}
+    @media (max-width: 900px){
+      .g2,.g3,.g4,.g5{grid-template-columns:1fr}
+      .row,.hero-top{flex-direction:column; align-items:stretch}
+      .hero-actions{justify-content:flex-start}
+      .title-input{font-size:22px}
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <div class="hero-top">
+      <div class="brand">
+        <div id="logoBox" class="logo">💸</div>
+        <div style="min-width:0; flex:1">
+          <div class="kicker">Amazing Budget App</div>
+          <input id="appName" class="title-input" type="text" value="Amazing Weekly Budget" />
+          <div class="subtitle">Weekly budgeting, live spend tracking, yearly totals, history, export, forecasts, installable on your phone.</div>
+          <div class="installTip small">Use <strong>Install App</strong> after uploading to Netlify.</div>
+        </div>
+      </div>
+      <div class="hero-actions">
+        <label for="logoUpload" class="pill" style="cursor:pointer">Add logo</label>
+        <input id="logoUpload" class="hidden" type="file" accept="image/*" />
+        <button id="installBtn" class="success hidden" style="width:auto">Install App</button>
+        <button id="startWeekBtn" class="warn" style="width:auto">Start New Week</button>
+        <button id="exportCsvBtn" class="secondary" style="width:auto">Export CSV</button>
+        <button id="resetBtn" class="danger" style="width:auto">Reset All</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid g2">
+    <div class="card">
+      <h2>Income & Pay Cycle</h2>
+      <div class="grid g2">
+        <div>
+          <label>Weekly income</label>
+          <input id="income" type="number" min="0" placeholder="0" />
+        </div>
+        <div>
+          <label>Expected weekly income</label>
+          <input id="expectedIncome" type="number" min="0" placeholder="0" />
+        </div>
+      </div>
+      <div class="grid g2" style="margin-top:12px">
+        <div>
+          <label>Last pay date</label>
+          <input id="lastPay" type="date" />
+        </div>
+        <div>
+          <label>Next pay date</label>
+          <input id="nextPay" type="date" />
+        </div>
+      </div>
+      <div class="grid g2" style="margin-top:12px">
+        <div>
+          <label>Weekly savings target</label>
+          <input id="savingsTarget" type="number" min="0" placeholder="0" />
+        </div>
+        <div>
+          <label>Weekly fun money target</label>
+          <input id="funTarget" type="number" min="0" placeholder="0" />
+        </div>
+      </div>
+      <div class="grid g2" style="margin-top:12px">
+        <div>
+          <label>Balance brought forward</label>
+          <input id="carryBalance" type="number" placeholder="0" />
+        </div>
+        <div>
+          <label>Use bank balance instead</label>
+          <div class="small" style="padding-top:14px">If you enter your real bank balance, the app will use that as the live amount available now. Otherwise it uses the carried balance + this week's income.</div>
+        </div>
+      </div>
+      <div class="footerNote">Change income each week if needed, then hit <strong>Start New Week</strong> on payday to archive the week, carry the remaining balance forward, clear current spends, and roll the pay dates forward.</div>
+    </div>
+
+    <div class="card">
+      <h2>Live Status</h2>
+      <div id="statusBox" class="okBox">You are on track.</div>
+      <div class="grid g2" style="margin-top:12px">
+        <div class="stat">
+          <div class="small">Days until next pay</div>
+          <div id="daysUntilPay" class="value">—</div>
+        </div>
+        <div class="stat">
+          <div class="small">Safe spend until payday</div>
+          <div id="safeUntilPay" class="value">$0.00</div>
+        </div>
+      </div>
+      <div class="grid g2" style="margin-top:12px">
+        <div class="stat">
+          <div class="small">Current bank balance</div>
+          <input id="currentBalance" type="number" min="0" placeholder="Optional" />
+        </div>
+        <div class="stat">
+          <div class="small">Forecast balance at payday</div>
+          <div id="forecastBalance" class="value">$0.00</div>
+        </div>
+      </div>
+      <div class="grid g2" style="margin-top:12px">
+        <div class="stat">
+          <div class="small">Starting available balance</div>
+          <div id="startingAvailable" class="value">$0.00</div>
+        </div>
+        <div class="stat">
+          <div class="small">Live available now</div>
+          <div id="liveAvailable" class="value">$0.00</div>
+        </div>
+      </div>
+      <div class="footerNote" id="statusNote"></div>
+    </div>
+  </div>
+
+  <div class="grid g5">
+    <div class="stat">
+      <div class="small">Weekly income</div>
+      <div id="statIncome" class="value">$0.00</div>
+    </div>
+    <div class="stat">
+      <div class="small">Weekly bills</div>
+      <div id="statBills" class="value">$0.00</div>
+    </div>
+    <div class="stat">
+      <div class="small">Spent this week</div>
+      <div id="statSpentWeek" class="value">$0.00</div>
+    </div>
+    <div class="stat">
+      <div class="small">Live available now</div>
+      <div id="statLiveAvailable" class="value">$0.00</div>
+    </div>
+    <div class="stat">
+      <div class="small">Safe daily spend left</div>
+      <div id="statDaily" class="value">$0.00</div>
+    </div>
+  </div>
+
+  <div class="grid g2" style="margin-top:14px">
+    <div class="card">
+      <div class="between">
+        <div>
+          <h2>Bills</h2>
+          <div class="small">Recurring costs automatically converted to weekly values.</div>
+        </div>
+        <button id="addBillBtn" style="width:auto">Add Bill</button>
+      </div>
+      <div id="billList"></div>
+    </div>
+
+    <div class="card">
+      <div class="between">
+        <div>
+          <h2>Spending Tracker</h2>
+          <div class="small">Enter spends as they happen. Choose who spent it.</div>
+        </div>
+      </div>
+      <div class="grid g2">
+        <div>
+          <label>Spend item</label>
+          <input id="spendName" type="text" placeholder="e.g. Groceries" />
+        </div>
+        <div>
+          <label>Amount</label>
+          <input id="spendAmount" type="number" min="0" placeholder="0" />
+        </div>
+      </div>
+      <div class="grid g3" style="margin-top:12px">
+        <div>
+          <label>Category</label>
+          <select id="spendCategory">
+            <option>General</option>
+            <option>Groceries</option>
+            <option>Fuel</option>
+            <option>Eating Out</option>
+            <option>Bills</option>
+            <option>Kids</option>
+            <option>Medical</option>
+            <option>Shopping</option>
+            <option>Entertainment</option>
+          </select>
+        </div>
+        <div>
+          <label>Who spent it</label>
+          <select id="spendPerson">
+            <option>Joint</option>
+            <option>Sean</option>
+            <option>Wife</option>
+          </select>
+        </div>
+        <div>
+          <label>Date</label>
+          <input id="spendDate" type="date" />
+        </div>
+      </div>
+      <div style="margin-top:12px" class="toolbar">
+        <button id="saveSpendBtn">Save Spend</button>
+      </div>
+      <div id="spendList"></div>
+    </div>
+  </div>
+
+  <div class="grid g2">
+    <div class="card">
+      <h2>Weekly Summary</h2>
+      <table class="table">
+        <tr><th>Item</th><th class="right">Amount</th></tr>
+        <tr><td>Balance brought forward</td><td class="right" id="sumCarry">$0.00</td></tr>
+        <tr><td>Income</td><td class="right" id="sumIncome">$0.00</td></tr>
+        <tr><td>Bills</td><td class="right" id="sumBills">$0.00</td></tr>
+        <tr><td>Savings target</td><td class="right" id="sumSavings">$0.00</td></tr>
+        <tr><td>Fun target</td><td class="right" id="sumFun">$0.00</td></tr>
+        <tr><td>Actual spending</td><td class="right" id="sumSpent">$0.00</td></tr>
+        <tr><td><strong>Starting available</strong></td><td class="right"><strong id="sumStartingAvailable">$0.00</strong></td></tr>
+        <tr><td><strong>Left for the week</strong></td><td class="right"><strong id="sumLeftWeek">$0.00</strong></td></tr>
+        <tr><td><strong>Live available now</strong></td><td class="right"><strong id="sumLiveAvailable">$0.00</strong></td></tr>
+        <tr><td><strong>Left until payday</strong></td><td class="right"><strong id="sumLeftPayday">$0.00</strong></td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>Year Totals</h2>
+      <div class="grid g2">
+        <div class="stat"><div class="small">Total spent this year</div><div id="yearSpent" class="value">$0.00</div></div>
+        <div class="stat"><div class="small">Total saved this year</div><div id="yearSaved" class="value">$0.00</div></div>
+        <div class="stat"><div class="small">Monthly average spent</div><div id="monthAvgSpent" class="value">$0.00</div></div>
+        <div class="stat"><div class="small">Monthly average saved</div><div id="monthAvgSaved" class="value">$0.00</div></div>
+      </div>
+      <div class="footerNote">Year totals include archived weeks plus the current week.</div>
+    </div>
+  </div>
+
+  <div class="grid g2">
+    <div class="card">
+      <h2>Spending by Category</h2>
+      <div id="categoryBars"></div>
+      <div class="canvasWrap"><canvas id="categoryChart" width="500" height="240"></canvas></div>
+    </div>
+
+    <div class="card">
+      <h2>Spending Split</h2>
+      <div id="personBars"></div>
+      <div class="footerNote">Track what was spent by Sean, Wife, or Joint.</div>
+    </div>
+  </div>
+
+  <div class="grid g2">
+    <div class="card">
+      <h2>Balance Forecast Until Payday</h2>
+      <div class="small">Forecast based on your current weekly budget and the days left until payday.</div>
+      <div id="forecastTable"></div>
+    </div>
+
+    <div class="card">
+      <h2>Weekly History</h2>
+      <div class="small">Every time you tap Start New Week, the app archives the current week here.</div>
+      <div id="historyList"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = "amazing-weekly-budget-v1";
+
+const defaultState = {
+  appName: "Amazing Weekly Budget",
+  logo: "",
+  income: "",
+  expectedIncome: "",
+  carryBalance: "",
+  currentBalance: "",
+  savingsTarget: "",
+  funTarget: "",
+  lastPay: "",
+  nextPay: "",
+  bills: [
+    {id:1, name:"Rent / Mortgage", amount:"", frequency:"weekly"},
+    {id:2, name:"Electricity", amount:"", frequency:"monthly"}
+  ],
+  currentSpends: [],
+  weeklyHistory: []
+};
+
+let state = loadState();
+let deferredPrompt = null;
+let editingSpendId = null;
+
+const frequencies = {
+  weekly:1,
+  fortnightly:1/2,
+  monthly:12/52,
+  quarterly:4/52,
+  yearly:1/52
+};
+
+const $ = (id) => document.getElementById(id);
+
+function clone(v){ return JSON.parse(JSON.stringify(v)); }
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? {...clone(defaultState), ...JSON.parse(raw)} : clone(defaultState);
+  }catch{
+    return clone(defaultState);
+  }
+}
+
+function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+
+function money(n){
+  const v = Number.isFinite(n) ? n : 0;
+  return new Intl.NumberFormat("en-AU",{style:"currency",currency:"AUD",maximumFractionDigits:2}).format(v);
+}
+
+function num(v){
+  const n = parseFloat(v);
+  return Number.isFinite(n) ? n : 0;
+}
+
+function todayISO(){
+  const d = new Date();
+  return formatDate(d);
+}
+
+function formatDate(d){
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,"0");
+  const day = String(d.getDate()).padStart(2,"0");
+  return `${y}-${m}-${day}`;
+}
+
+function daysUntil(dateStr){
+  if(!dateStr) return null;
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const d = new Date(dateStr + "T00:00:00");
+  return Math.ceil((d - today)/86400000);
+}
+
+function deriveNextPay(){
+  if(state.lastPay){
+    const d = new Date(state.lastPay + "T00:00:00");
+    d.setDate(d.getDate()+7);
+    state.nextPay = formatDate(d);
+  }
+}
+
+function deriveLastPay(){
+  if(state.nextPay){
+    const d = new Date(state.nextPay + "T00:00:00");
+    d.setDate(d.getDate()-7);
+    state.lastPay = formatDate(d);
+  }
+}
+
+function weeklyBillsTotal(){
+  return state.bills.reduce((sum,bill)=> sum + num(bill.amount) * (frequencies[bill.frequency] || 0), 0);
+}
+
+function currentWeekSpendsTotal(){
+  return state.currentSpends.reduce((sum,sp)=> sum + num(sp.amount), 0);
+}
+
+function weeklySummary(){
+  const income = num(state.income);
+  const expectedIncome = num(state.expectedIncome || state.income);
+  const carryBalance = num(state.carryBalance);
+  const bills = weeklyBillsTotal();
+  const savings = num(state.savingsTarget);
+  const fun = num(state.funTarget);
+  const spent = currentWeekSpendsTotal();
+
+  const startingAvailable = carryBalance + income;
+  const leftWeek = startingAvailable - bills - savings - fun - spent;
+
+  const currentBalance = num(state.currentBalance);
+  const liveAvailable = currentBalance > 0
+    ? currentBalance - spent
+    : leftWeek;
+
+  const days = daysUntil(state.nextPay);
+  const daysLeft = days === null ? 7 : Math.max(days, 0);
+  const daily = daysLeft > 0 ? liveAvailable / daysLeft : liveAvailable;
+  const safeUntilPay = days === null ? liveAvailable : daily * Math.max(days, 0);
+  const forecastBalance = currentBalance > 0 ? currentBalance - spent : liveAvailable;
+
+  return {income, expectedIncome, carryBalance, bills, savings, fun, spent, startingAvailable, leftWeek, liveAvailable, days, daysLeft, daily, safeUntilPay, currentBalance, forecastBalance};
+}
+
+function yearStart(){
+  const d = new Date();
+  return new Date(d.getFullYear(),0,1);
+}
+
+function historyThisYear(){
+  const start = yearStart();
+  return state.weeklyHistory.filter(w => new Date((w.weekStart || todayISO()) + "T00:00:00") >= start);
+}
+
+function yearTotals(){
+  const hist = historyThisYear();
+  const histSpent = hist.reduce((sum,w)=> sum + num(w.totalSpent), 0);
+  const histSaved = hist.reduce((sum,w)=> sum + num(w.savingsTarget), 0);
+  const current = weeklySummary();
+  const spent = histSpent + current.spent;
+  const saved = histSaved + current.savings;
+  const monthsSoFar = new Date().getMonth() + 1;
+  return {
+    spent,
+    saved,
+    avgSpent: monthsSoFar ? spent / monthsSoFar : 0,
+    avgSaved: monthsSoFar ? saved / monthsSoFar : 0
+  };
+}
+
+function categoryTotalsCurrentWeek(){
+  const map = {};
+  state.currentSpends.forEach(sp => {
+    map[sp.category] = (map[sp.category] || 0) + num(sp.amount);
+  });
+  return map;
+}
+
+function personTotalsCurrentWeek(){
+  const map = {};
+  state.currentSpends.forEach(sp => {
+    map[sp.person] = (map[sp.person] || 0) + num(sp.amount);
+  });
+  return map;
+}
+
+function statusInfo(){
+  const s = weeklySummary();
+  const pct = s.income > 0 ? (s.spent + s.bills + s.fun + s.savings) / s.income : 0;
+  if(s.leftWeek < 0){
+    return {cls:"dangerBox", title:"Overspending alert", note:"You have gone over your weekly budget. Cut spending or increase the income figure for this week if needed."};
+  }
+  if(pct > 0.9){
+    return {cls:"warning", title:"Almost at the limit", note:"You are close to your weekly limit. Keep an eye on new spends."};
+  }
+  return {cls:"okBox", title:"You are on track", note:"Your current spending is still inside the weekly plan."};
+}
+
+function renderTop(){
+  const s = weeklySummary();
+  const y = yearTotals();
+  const status = statusInfo();
+
+  $("appName").value = state.appName;
+  $("income").value = state.income;
+  $("expectedIncome").value = state.expectedIncome;
+  $("carryBalance").value = state.carryBalance;
+  $("currentBalance").value = state.currentBalance;
+  $("savingsTarget").value = state.savingsTarget;
+  $("funTarget").value = state.funTarget;
+  $("lastPay").value = state.lastPay;
+  $("nextPay").value = state.nextPay;
+  $("spendDate").value = $("spendDate").value || todayISO();
+
+  $("statIncome").textContent = money(s.income);
+  $("statBills").textContent = money(s.bills);
+  $("statSpentWeek").textContent = money(s.spent);
+  $("statLiveAvailable").textContent = money(s.liveAvailable);
+  $("statDaily").textContent = money(s.daily);
+
+  $("sumCarry").textContent = money(s.carryBalance);
+  $("sumIncome").textContent = money(s.income);
+  $("sumBills").textContent = money(s.bills);
+  $("sumSavings").textContent = money(s.savings);
+  $("sumFun").textContent = money(s.fun);
+  $("sumSpent").textContent = money(s.spent);
+  $("sumStartingAvailable").textContent = money(s.startingAvailable);
+  $("sumLeftWeek").textContent = money(s.leftWeek);
+  $("sumLiveAvailable").textContent = money(s.liveAvailable);
+  $("sumLeftPayday").textContent = s.days === null ? "—" : money(s.safeUntilPay);
+
+  $("yearSpent").textContent = money(y.spent);
+  $("yearSaved").textContent = money(y.saved);
+  $("monthAvgSpent").textContent = money(y.avgSpent);
+  $("monthAvgSaved").textContent = money(y.avgSaved);
+
+  $("daysUntilPay").textContent = s.days === null ? "—" : String(s.days);
+  $("safeUntilPay").textContent = s.days === null ? money(s.liveAvailable) : money(s.safeUntilPay);
+  $("forecastBalance").textContent = money(s.forecastBalance);
+  $("startingAvailable").textContent = money(s.startingAvailable);
+  $("liveAvailable").textContent = money(s.liveAvailable);
+
+  const box = $("statusBox");
+  box.className = status.cls;
+  box.textContent = status.title;
+  $("statusNote").textContent = status.note;
+
+  renderLogo();
+}
+
+function renderLogo(){
+  const logoBox = $("logoBox");
+  if(state.logo){
+    logoBox.innerHTML = `<img alt="logo" src="${state.logo}">`;
+  }else{
+    logoBox.textContent = "💸";
+  }
+}
+
+function renderBills(){
+  const list = $("billList");
+  list.innerHTML = "";
+  state.bills.forEach((bill, idx) => {
+    const node = document.createElement("div");
+    node.className = "listItem";
+    node.innerHTML = `
+      <div class="row">
+        <div>
+          <label>Bill name</label>
+          <input data-field="name" type="text" value="${escapeHtml(bill.name || "")}" placeholder="e.g. Rego, internet">
+        </div>
+        <div>
+          <label>Amount</label>
+          <input data-field="amount" type="number" min="0" value="${escapeHtml(bill.amount || "")}" placeholder="0">
+        </div>
+        <div>
+          <label>Frequency</label>
+          <select data-field="frequency">
+            ${Object.keys(frequencies).map(f => `<option value="${f}" ${bill.frequency===f?"selected":""}>${cap(f)}</option>`).join("")}
+          </select>
+        </div>
+        <div style="max-width:120px">
+          <label>&nbsp;</label>
+          <button class="danger delete-bill">Delete</button>
+        </div>
+      </div>
+      <div class="footerNote">Weekly equivalent: <strong>${money(num(bill.amount) * (frequencies[bill.frequency] || 0))}</strong></div>
+    `;
+    node.querySelectorAll("[data-field]").forEach(el => {
+      const handler = (e) => {
+        state.bills[idx][e.target.dataset.field] = e.target.value;
+        saveState();
+        if(e.target.tagName === "SELECT") renderBills();
+        renderAllCalculated();
+      };
+      if(el.tagName === "SELECT") el.addEventListener("change", handler);
+      else el.addEventListener("input", handler);
+    });
+    node.querySelector(".delete-bill").addEventListener("click", () => {
+      state.bills.splice(idx,1);
+      saveState();
+      renderAll();
+    });
+    list.appendChild(node);
+  });
+}
+
+function renderSpends(){
+  const list = $("spendList");
+  list.innerHTML = "";
+  if(!state.currentSpends.length){
+    list.innerHTML = `<div class="footerNote">No spends added yet.</div>`;
+    return;
+  }
+  state.currentSpends.slice().reverse().forEach(sp => {
+    const div = document.createElement("div");
+    div.className = "listItem";
+    div.innerHTML = `
+      <div class="between">
+        <div>
+          <div><strong>${escapeHtml(sp.name || "Spend")}</strong></div>
+          <div class="small">${escapeHtml(sp.category || "General")} • <span class="splitName">${escapeHtml(sp.person || "Joint")}</span> • ${escapeHtml(sp.date || "")}</div>
+        </div>
+        <div class="right">
+          <div><strong>${money(num(sp.amount))}</strong></div>
+        </div>
+      </div>
+      <div class="toolbar" style="margin-top:10px">
+        <button class="secondary edit-spend" style="width:auto">Edit</button>
+        <button class="danger delete-spend" style="width:auto">Delete</button>
+      </div>
+    `;
+    div.querySelector(".edit-spend").addEventListener("click", () => loadSpendForEdit(sp.id));
+    div.querySelector(".delete-spend").addEventListener("click", () => {
+      state.currentSpends = state.currentSpends.filter(x => x.id !== sp.id);
+      saveState();
+      renderAll();
+    });
+    list.appendChild(div);
+  });
+}
+
+function loadSpendForEdit(id){
+  const sp = state.currentSpends.find(x => x.id === id);
+  if(!sp) return;
+  editingSpendId = id;
+  $("spendName").value = sp.name || "";
+  $("spendAmount").value = sp.amount || "";
+  $("spendCategory").value = sp.category || "General";
+  $("spendPerson").value = sp.person || "Joint";
+  $("spendDate").value = sp.date || todayISO();
+  $("saveSpendBtn").textContent = "Update Spend";
+}
+
+function clearSpendForm(){
+  editingSpendId = null;
+  $("spendName").value = "";
+  $("spendAmount").value = "";
+  $("spendCategory").value = "General";
+  $("spendPerson").value = "Joint";
+  $("spendDate").value = todayISO();
+  $("saveSpendBtn").textContent = "Save Spend";
+}
+
+function addOrUpdateSpend(){
+  const spend = {
+    id: editingSpendId || Date.now(),
+    name: $("spendName").value.trim() || "Spend",
+    amount: $("spendAmount").value,
+    category: $("spendCategory").value,
+    person: $("spendPerson").value,
+    date: $("spendDate").value || todayISO()
+  };
+  if(!num(spend.amount)) return;
+  if(editingSpendId){
+    state.currentSpends = state.currentSpends.map(x => x.id === editingSpendId ? spend : x);
+  }else{
+    state.currentSpends.push(spend);
+  }
+  clearSpendForm();
+  saveState();
+  renderAll();
+}
+
+function renderCategoryBars(){
+  const wrap = $("categoryBars");
+  wrap.innerHTML = "";
+  const totals = categoryTotalsCurrentWeek();
+  const entries = Object.entries(totals).sort((a,b)=> b[1]-a[1]);
+  if(!entries.length){
+    wrap.innerHTML = `<div class="footerNote">No category spending yet this week.</div>`;
+    drawDonut({});
+    return;
+  }
+  const max = entries[0][1] || 1;
+  entries.forEach(([name,total]) => {
+    const pct = max ? (total / max) * 100 : 0;
+    const div = document.createElement("div");
+    div.className = "barRow";
+    div.innerHTML = `
+      <div class="between"><span>${escapeHtml(name)}</span><strong>${money(total)}</strong></div>
+      <div class="progress" style="margin-top:6px"><div class="barFill" style="width:${pct}%"></div></div>
+    `;
+    wrap.appendChild(div);
+  });
+  drawDonut(totals);
+}
+
+function renderPersonBars(){
+  const wrap = $("personBars");
+  wrap.innerHTML = "";
+  const totals = personTotalsCurrentWeek();
+  const entries = Object.entries(totals).sort((a,b)=> b[1]-a[1]);
+  if(!entries.length){
+    wrap.innerHTML = `<div class="footerNote">No personal split data yet this week.</div>`;
+    return;
+  }
+  const max = entries[0][1] || 1;
+  entries.forEach(([name,total]) => {
+    const pct = max ? (total/max)*100 : 0;
+    const div = document.createElement("div");
+    div.className = "barRow";
+    div.innerHTML = `
+      <div class="between"><span>${escapeHtml(name)}</span><strong>${money(total)}</strong></div>
+      <div class="progress" style="margin-top:6px"><div class="barFill" style="width:${pct}%; background:linear-gradient(90deg,#22c55e,#86efac)"></div></div>
+    `;
+    wrap.appendChild(div);
+  });
+}
+
+function drawDonut(totals){
+  const canvas = $("categoryChart");
+  const ctx = canvas.getContext("2d");
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  const entries = Object.entries(totals);
+  const total = entries.reduce((s,[,v])=> s+v,0);
+  if(!total){
+    ctx.fillStyle = "#94a3b8";
+    ctx.font = "16px sans-serif";
+    ctx.fillText("No data yet", 20, 40);
+    return;
+  }
+  const colors = ["#38bdf8","#22c55e","#f59e0b","#ef4444","#a78bfa","#14b8a6","#f97316","#eab308"];
+  let start = -Math.PI/2;
+  const cx = canvas.width/2, cy = canvas.height/2, r = 78, inner = 44;
+  entries.forEach(([name,val], i) => {
+    const ang = (val/total) * Math.PI * 2;
+    ctx.beginPath();
+    ctx.moveTo(cx,cy);
+    ctx.arc(cx, cy, r, start, start+ang);
+    ctx.closePath();
+    ctx.fillStyle = colors[i % colors.length];
+    ctx.fill();
+    start += ang;
+  });
+  ctx.globalCompositeOperation = "destination-out";
+  ctx.beginPath();
+  ctx.arc(cx, cy, inner, 0, Math.PI*2);
+  ctx.fill();
+  ctx.globalCompositeOperation = "source-over";
+
+  ctx.fillStyle = "#f8fafc";
+  ctx.font = "bold 18px sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillText(money(total), cx, cy + 6);
+
+  let y = 18;
+  entries.forEach(([name,val], i) => {
+    ctx.fillStyle = colors[i % colors.length];
+    ctx.fillRect(20, y-10, 12, 12);
+    ctx.fillStyle = "#cbd5e1";
+    ctx.textAlign = "left";
+    ctx.font = "13px sans-serif";
+    ctx.fillText(`${name}: ${money(val)}`, 40, y);
+    y += 18;
+  });
+}
+
+function renderForecast(){
+  const holder = $("forecastTable");
+  const s = weeklySummary();
+  holder.innerHTML = "";
+  if(s.days === null){
+    holder.innerHTML = `<div class="footerNote">Add next pay date to see a day-by-day forecast.</div>`;
+    return;
+  }
+  const days = Math.max(s.days, 0);
+  const dailyAllowance = s.daysLeft > 0 ? s.leftWeek / s.daysLeft : s.leftWeek;
+  const table = document.createElement("table");
+  table.className = "table";
+  table.innerHTML = `<tr><th>Day</th><th class="right">Forecast left</th></tr>`;
+  let running = s.liveAvailable;
+  for(let i=0;i<=days;i++){
+    const d = new Date();
+    d.setHours(0,0,0,0);
+    d.setDate(d.getDate()+i);
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${formatDate(d)}</td><td class="right">${money(running)}</td>`;
+    table.appendChild(tr);
+    running -= dailyAllowance;
+  }
+  holder.appendChild(table);
+}
+
+function renderHistory(){
+  const holder = $("historyList");
+  holder.innerHTML = "";
+  if(!state.weeklyHistory.length){
+    holder.innerHTML = `<div class="footerNote">No archived weeks yet. Tap Start New Week on payday.</div>`;
+    return;
+  }
+  state.weeklyHistory.slice().reverse().forEach(week => {
+    const div = document.createElement("div");
+    div.className = "weekly-history-item";
+    div.innerHTML = `
+      <div class="between">
+        <div>
+          <div><strong>${escapeHtml(week.label || week.weekStart)}</strong></div>
+          <div class="small">B/F ${money(num(week.carryBalance))} • Income ${money(num(week.income))} • Spent ${money(num(week.totalSpent))} • Saved ${money(num(week.savingsTarget))}</div>
+        </div>
+        <div class="right"><strong>${money(num(week.leftWeek))}</strong></div>
+      </div>
+    `;
+    holder.appendChild(div);
+  });
+}
+
+function startNewWeek(){
+  const s = weeklySummary();
+  const label = `${state.lastPay || todayISO()} to ${state.nextPay || "—"}`;
+  state.weeklyHistory.push({
+    id: Date.now(),
+    label,
+    weekStart: state.lastPay || todayISO(),
+    weekEnd: state.nextPay || todayISO(),
+    carryBalance: state.carryBalance,
+    income: state.income,
+    bills: s.bills,
+    savingsTarget: state.savingsTarget,
+    funTarget: state.funTarget,
+    totalSpent: s.spent,
+    startingAvailable: s.startingAvailable,
+    leftWeek: s.leftWeek,
+    liveAvailable: s.liveAvailable,
+    spendCount: state.currentSpends.length,
+    spends: clone(state.currentSpends)
+  });
+
+  state.carryBalance = String(Math.max(s.liveAvailable, 0));
+  state.currentBalance = "";
+  state.currentSpends = [];
+  state.income = state.expectedIncome || state.income;
+
+  if(state.nextPay){
+    state.lastPay = state.nextPay;
+    const d = new Date(state.nextPay + "T00:00:00");
+    d.setDate(d.getDate()+7);
+    state.nextPay = formatDate(d);
+  }else if(state.lastPay){
+    const d = new Date(state.lastPay + "T00:00:00");
+    d.setDate(d.getDate()+7);
+    state.lastPay = formatDate(d);
+    d.setDate(d.getDate()+7);
+    state.nextPay = formatDate(d);
+  }
+
+  saveState();
+  renderAll();
+}
+
+function exportCsv(){
+  const rows = [["Type","Week Start","Week End","Income","Bills","Savings","Fun","Spent","Left"]];
+  state.weeklyHistory.forEach(w => {
+    rows.push(["Archived Week", w.weekStart, w.weekEnd, w.income, w.bills, w.savingsTarget, w.funTarget, w.totalSpent, w.leftWeek]);
+  });
+  const s = weeklySummary();
+  rows.push(["Current Week", state.lastPay, state.nextPay, s.income, s.bills, s.savings, s.fun, s.spent, s.leftWeek]);
+
+  rows.push([]);
+  rows.push(["Current Spends"]);
+  rows.push(["Date","Name","Category","Person","Amount"]);
+  state.currentSpends.forEach(sp => rows.push([sp.date, sp.name, sp.category, sp.person, sp.amount]));
+
+  const csv = rows.map(r => r.map(cell => `"${String(cell ?? "").replaceAll('"','""')}"`).join(",")).join("\n");
+  const blob = new Blob([csv], {type:"text/csv;charset=utf-8;"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "amazing-budget-export.csv";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function escapeHtml(str){
+  return String(str || "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;");
+}
+function cap(s){ return s.charAt(0).toUpperCase() + s.slice(1); }
+
+function renderAllCalculated(){
+  renderTop();
+  renderCategoryBars();
+  renderPersonBars();
+  renderForecast();
+  renderHistory();
+}
+
+function renderAll(){
+  renderTop();
+  renderBills();
+  renderSpends();
+  renderCategoryBars();
+  renderPersonBars();
+  renderForecast();
+  renderHistory();
+}
+
+$("appName").addEventListener("input", e => { state.appName = e.target.value; saveState(); });
+$("income").addEventListener("input", e => { state.income = e.target.value; saveState(); renderAllCalculated(); });
+$("expectedIncome").addEventListener("input", e => { state.expectedIncome = e.target.value; saveState(); renderAllCalculated(); });
+$("carryBalance").addEventListener("input", e => { state.carryBalance = e.target.value; saveState(); renderAllCalculated(); });
+$("currentBalance").addEventListener("input", e => { state.currentBalance = e.target.value; saveState(); renderAllCalculated(); });
+$("savingsTarget").addEventListener("input", e => { state.savingsTarget = e.target.value; saveState(); renderAllCalculated(); });
+$("funTarget").addEventListener("input", e => { state.funTarget = e.target.value; saveState(); renderAllCalculated(); });
+
+$("lastPay").addEventListener("change", e => {
+  state.lastPay = e.target.value;
+  deriveNextPay();
+  $("nextPay").value = state.nextPay;
+  saveState();
+  renderAllCalculated();
+});
+
+$("nextPay").addEventListener("change", e => {
+  state.nextPay = e.target.value;
+  deriveLastPay();
+  $("lastPay").value = state.lastPay;
+  saveState();
+  renderAllCalculated();
+});
+
+$("addBillBtn").addEventListener("click", () => {
+  state.bills.push({id:Date.now(), name:"", amount:"", frequency:"weekly"});
+  saveState();
+  renderAll();
+});
+
+$("saveSpendBtn").addEventListener("click", addOrUpdateSpend);
+
+$("startWeekBtn").addEventListener("click", () => {
+  if(!confirm("Archive this week, clear current spends, and roll pay dates forward by 7 days?")) return;
+  startNewWeek();
+});
+
+$("exportCsvBtn").addEventListener("click", exportCsv);
+
+$("resetBtn").addEventListener("click", () => {
+  if(!confirm("Reset the entire app and delete all history?")) return;
+  state = clone(defaultState);
+  saveState();
+  renderAll();
+});
+
+$("logoUpload").addEventListener("change", e => {
+  const file = e.target.files && e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    state.logo = reader.result;
+    saveState();
+    renderTop();
+  };
+  reader.readAsDataURL(file);
+});
+
+window.addEventListener("beforeinstallprompt", e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  $("installBtn").classList.remove("hidden");
+});
+
+$("installBtn").addEventListener("click", async () => {
+  if(!deferredPrompt) return;
+  deferredPrompt.prompt();
+  await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  $("installBtn").classList.add("hidden");
+});
+
+if("serviceWorker" in navigator){
+  window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(console.error));
+}
+
+if(!state.lastPay && state.nextPay) deriveLastPay();
+if(!state.nextPay && state.lastPay) deriveNextPay();
+if(!$("spendDate").value) $("spendDate").value = todayISO();
+
+renderAll();
+</script>
+</body>
+</html>

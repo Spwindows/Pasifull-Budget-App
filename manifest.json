@@ -1,0 +1,9 @@
+{
+  "name": "Amazing Weekly Budget",
+  "short_name": "Budget",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "description": "Weekly budget app with live spend tracking, yearly totals, history, forecasts, and export."
+}
